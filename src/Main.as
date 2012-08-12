@@ -10,10 +10,13 @@ import flash.utils.getTimer;
 import ice.tools.display.prerenderer.JellyAnimation;
 import ice.tools.display.tools.FPSDisplay;
 import ice.wordox.gfx.JellyBirthAnimation;
+import ice.wordox.gfx.JellyBreathingAnimation;
 import ice.wordox.gfx.JellyDropAnimation;
 import ice.wordox.gfx.JellyMovingAnimation;
 import ice.wordox.gfx.JellyOutAnimation;
 import ice.wordox.gfx.JellyOverAnimation;
+import ice.wordox.gfx.JellyStealingAnimation;
+import ice.wordox.gfx.JellyWinAnimation;
 
 [SWF(frameRate="32", width="1024", height="1024")]
 public class Main extends Sprite {
@@ -108,7 +111,7 @@ public class Main extends Sprite {
                 }
 
                 var jellyClass : Class = _jelliesClass[Math.floor(Math.random() * _jelliesClass.length)];
-                animation = new JellyAnimation (jellyClass, playersColors);
+                animation = new JellyAnimation (jellyClass, Math.random () * 29 + 1, playersColors);
 
                 if (colIndex == 0 && rowIndex == 0) {
                     firstCreationEnd = getTimer ();
@@ -129,7 +132,8 @@ public class Main extends Sprite {
     private var _jelliesAnimations : Vector.<JellyAnimation>
             = new Vector.<JellyAnimation> ();
 
-    private const _jelliesClass : Array = [JellyBirthAnimation, JellyDropAnimation, JellyMovingAnimation, JellyOutAnimation, JellyOverAnimation];
+    private const _jelliesClass : Array = [JellyBirthAnimation, JellyDropAnimation, JellyMovingAnimation, JellyOutAnimation, JellyOverAnimation
+    , JellyBreathingAnimation, JellyStealingAnimation, JellyWinAnimation];
 
     private var _currentDisplayMode : int = 0;
     private var _fpsDisplay:FPSDisplay;

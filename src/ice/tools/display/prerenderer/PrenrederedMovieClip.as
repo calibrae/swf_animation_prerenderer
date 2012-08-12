@@ -22,17 +22,6 @@ public class PrenrederedMovieClip extends Sprite {
         this.addEventListener(Event.ADDED_TO_STAGE, onAdded, false, 0, true);
     }
 
-    private function onAdded(event:Event):void {
-        this.removeEventListener(Event.ADDED_TO_STAGE, onAdded);
-        this.addEventListener(Event.REMOVED_FROM_STAGE, onRemoved, false, 0, true);
-        this.addEventListener(Event.ENTER_FRAME, onEnterframe);
-    }
-
-    private function onRemoved(event:Event):void {
-        this.removeEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
-        this.addEventListener(Event.ADDED_TO_STAGE, onAdded, false, 0, true);
-    }
-
     public function clone():PrenrederedMovieClip {
         return new PrenrederedMovieClip(_bitmapDatas, _animationBound);
     }
@@ -49,6 +38,17 @@ public class PrenrederedMovieClip extends Sprite {
         _animationBound = null;
     }
 
+    private function onAdded(event:Event):void {
+        this.removeEventListener(Event.ADDED_TO_STAGE, onAdded);
+        this.addEventListener(Event.REMOVED_FROM_STAGE, onRemoved, false, 0, true);
+        this.addEventListener(Event.ENTER_FRAME, onEnterframe);
+    }
+
+    private function onRemoved(event:Event):void {
+        this.removeEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
+        this.addEventListener(Event.ADDED_TO_STAGE, onAdded, false, 0, true);
+    }
+
     private function onEnterframe(event:Event):void {
         if (_bitmapDatas == null) {
             dispose();
@@ -61,7 +61,6 @@ public class PrenrederedMovieClip extends Sprite {
         }
         _currentDisplay.bitmapData = bitmapData;
     }
-
 
     private var _currentDisplay:Bitmap = new Bitmap();
     private var _bitmapDatas:Vector.<BitmapData>;
