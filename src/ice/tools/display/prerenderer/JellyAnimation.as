@@ -10,14 +10,16 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.utils.Dictionary;
 
 public class JellyAnimation extends Sprite {
 
     public function JellyAnimation (animationClass : Class, playersColor : Vector.<int>) {
-        if (_prenderedMovieClip == null) {
+        _animationClass = animationClass;
+        if (_prerenderedForClass[animationClass] == null) {
             initializeTextures (animationClass, playersColor);
         }
-        this.addChild(_prenderedMovieClip[0].clone());
+        this.addChild(_prerenderedForClass[animationClass][0].clone());
     }
 
     public function set playerSeatId (playerSeatId : int) : void {
@@ -27,11 +29,11 @@ public class JellyAnimation extends Sprite {
                 PrenrederedMovieClip(removed).dispose();
             }
         }
-        this.addChild(_prenderedMovieClip[playerSeatId].clone());
+        this.addChild(_prerenderedForClass[_animationClass][playerSeatId].clone());
     }
 
     private static function initializeTextures (animationClass : Class, playersColor : Vector.<int>) : void {
-        _prenderedMovieClip = new Vector.<PrenrederedMovieClip> ();
+        var prenderedMovieClip : Vector.<PrenrederedMovieClip> = new Vector.<PrenrederedMovieClip> ();
         _overlaySprite = new Sprite();
 
         var jellyAnimation : MovieClip = new animationClass ();
@@ -45,8 +47,9 @@ public class JellyAnimation extends Sprite {
 
         for (var i : uint = 0; i < playersColor.length; i++) {
             updateOverlayColor (playersColor[i]);
-            _prenderedMovieClip.push(MovieClipConversionUtils.generatePrerenderedMovieClip(jellyAnimation, animationBounds));
+            prenderedMovieClip.push(MovieClipConversionUtils.generatePrerenderedMovieClip(jellyAnimation, animationBounds));
         }
+        _prerenderedForClass[animationClass] = prenderedMovieClip;
         _overlaySprite = null;
     }
 
@@ -61,10 +64,11 @@ public class JellyAnimation extends Sprite {
         graphics.endFill ();
         return graphics;
     }
+    private var _animationClass : Class;
 
     private static var _overlaySprite : Sprite;
 
-    private static var _prenderedMovieClip : Vector.<PrenrederedMovieClip>;
+    private static const _prerenderedForClass : Dictionary = new Dictionary();
     private static const _LETTER_SIZE : int = 45;
 }
 }
