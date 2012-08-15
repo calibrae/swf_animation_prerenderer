@@ -37,16 +37,18 @@ public class JellyAnimation extends Sprite {
     public function set playerSeatId(playerSeatId:int):void {
         while (this.numChildren > 0) {
             var removed:DisplayObject = this.removeChildAt(0);
-            if (removed is PrenrederedMovieClip) {
-                PrenrederedMovieClip(removed).dispose();
+            if (removed is PrerenderedMovieClip) {
+                PrerenderedMovieClip(removed).dispose();
             }
         }
-        this.addChild(_prerenderedForClass[_animationClass][playerSeatId].clone());
+        var newMovieClip: PrerenderedMovieClip = _prerenderedForClass[_animationClass][playerSeatId].clone();
+        this.addChild(newMovieClip);
+        newMovieClip.play();
         this.addChild(_letterContainer);
     }
 
     private static function initializeTextures(letterCode:int, animationClass:Class, playersColor:Vector.<int>):void {
-        var prenderedMovieClip:Vector.<PrenrederedMovieClip> = new Vector.<PrenrederedMovieClip>();
+        var prenderedMovieClip:Vector.<PrerenderedMovieClip> = new Vector.<PrerenderedMovieClip>();
         _overlaySprite = new Sprite();
 
         var jellyAnimation:MovieClip = new animationClass();

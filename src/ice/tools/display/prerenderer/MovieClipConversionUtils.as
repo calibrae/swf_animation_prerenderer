@@ -65,7 +65,7 @@ public class MovieClipConversionUtils {
     }
 
     public static function generatePrerenderedMovieClip(movieClipInstance : MovieClip, animationBounds:IAnimationBound):DisplayObject {
-        return new PrenrederedMovieClip(MovieClipConversionUtils.generateBitmapDataFromMovieClip(movieClipInstance, animationBounds), animationBounds);
+        return new PrerenderedMovieClip(MovieClipConversionUtils.generateBitmapDataFromMovieClip(movieClipInstance, animationBounds), animationBounds);
     }
 
 

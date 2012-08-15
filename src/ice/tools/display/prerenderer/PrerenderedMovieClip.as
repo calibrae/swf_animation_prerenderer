@@ -11,9 +11,9 @@ import flash.display.BitmapData;
 import flash.display.Sprite;
 import flash.events.Event;
 
-public class PrenrederedMovieClip extends Sprite {
+public class PrerenderedMovieClip extends Sprite {
 
-    public function PrenrederedMovieClip(bitmapDatas:Vector.<BitmapData>, animationBound:IAnimationBound) {
+    public function PrerenderedMovieClip(bitmapDatas:Vector.<BitmapData>, animationBound:IAnimationBound) {
         _bitmapDatas = bitmapDatas;
         _animationBound = animationBound;
         _currentDisplay.x = animationBound.xDelta;
@@ -22,12 +22,28 @@ public class PrenrederedMovieClip extends Sprite {
         this.addEventListener(Event.ADDED_TO_STAGE, onAdded, false, 0, true);
     }
 
-    public function clone():PrenrederedMovieClip {
-        return new PrenrederedMovieClip(_bitmapDatas, _animationBound);
+    public function play () : void {
+        this.addEventListener(Event.ENTER_FRAME, onEnterframe);
+    }
+
+    public function stop () : void {
+        this.removeEventListener(Event.ENTER_FRAME, onEnterframe);
+    }
+
+    public function gotoFrame(frameIndex:int):void {
+        _currentFrame = (frameIndex) % _bitmapDatas.length;
+        var bitmapData:BitmapData = _bitmapDatas[_currentFrame];
+        if (bitmapData != null) {
+            _currentDisplay.bitmapData = bitmapData;
+        }
+    }
+
+    public function clone():PrerenderedMovieClip {
+        return new PrerenderedMovieClip(_bitmapDatas, _animationBound);
     }
 
     public function dispose():void {
-        this.removeEventListener(Event.ENTER_FRAME, onEnterframe);
+        stop();
         this.removeEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
         this.removeEventListener(Event.ADDED_TO_STAGE, onAdded);
 
@@ -41,7 +57,6 @@ public class PrenrederedMovieClip extends Sprite {
     private function onAdded(event:Event):void {
         this.removeEventListener(Event.ADDED_TO_STAGE, onAdded);
         this.addEventListener(Event.REMOVED_FROM_STAGE, onRemoved, false, 0, true);
-        this.addEventListener(Event.ENTER_FRAME, onEnterframe);
     }
 
     private function onRemoved(event:Event):void {
@@ -54,12 +69,8 @@ public class PrenrederedMovieClip extends Sprite {
             dispose();
             return;
         }
-        _currentFrame = (_currentFrame + 1) % _bitmapDatas.length;
-        var bitmapData:BitmapData = _bitmapDatas[_currentFrame];
-        if (bitmapData == null) {
-            return;
-        }
-        _currentDisplay.bitmapData = bitmapData;
+        var frameIndex:int = _currentFrame + 1;
+        gotoFrame(frameIndex);
     }
 
     private var _currentDisplay:Bitmap = new Bitmap();

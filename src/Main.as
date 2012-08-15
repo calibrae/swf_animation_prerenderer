@@ -8,6 +8,7 @@ import flash.events.MouseEvent;
 import flash.utils.getTimer;
 
 import ice.tools.display.prerenderer.JellyAnimation;
+import ice.tools.display.prerenderer.PrerenderedMovieClipManager;
 import ice.tools.display.tools.FPSDisplay;
 import ice.wordox.gfx.JellyBirthAnimation;
 import ice.wordox.gfx.JellyBreathingAnimation;
@@ -27,6 +28,7 @@ public class Main extends Sprite {
 
         displayPrerendered();
         _fpsDisplay = new FPSDisplay();
+        (new PrerenderedMovieClipManager(this)).startWork();
         this.addChild(_fpsDisplay);
 
     }
