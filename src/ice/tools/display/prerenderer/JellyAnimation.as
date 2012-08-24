@@ -74,7 +74,7 @@ public class JellyAnimation extends Sprite {
 
         for (var iPlayer:uint = 0; iPlayer < playersColor.length; iPlayer++) {
             updateOverlayColor(playersColor[iPlayer]);
-            prenderedMovieClip.push(MovieClipConversionUtils.generatePrerenderedMovieClip(jellyAnimation, animationBounds));
+//            prenderedMovieClip.push(MovieClipConversionUtils.generatePrerenderedMovieClip(jellyAnimation, animationBounds));
             _prerenderedForClass[animationClass] = prenderedMovieClip;
         }
         _overlaySprite = null;
