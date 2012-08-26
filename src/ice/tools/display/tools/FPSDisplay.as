@@ -16,13 +16,25 @@ public class FPSDisplay extends Sprite {
     public function FPSDisplay() {
         _memText = new TextField();
         _fpstext = new TextField();
+        _animationCountText = new TextField();
         this.addChild(_fpstext);
         _memText.y = 14;
         this.addChild(_memText);
+        _animationCountText.y = 28;
+        this.addChild(_animationCountText);
         _memText.background = _fpstext.background = true;
         _fpstext.backgroundColor = _memText.backgroundColor = 0xFFFFFF;
 
         this.addEventListener(Event.ADDED_TO_STAGE, onAdded, false, 0, true);
+    }
+
+
+    public function set currentAnimationsCount(value:int):void {
+        _currentAnimationsCount = value;
+    }
+
+    public function set totalAnimationCount(value:int):void {
+        _totalAnimationCount = value;
     }
 
     private function onAdded(event:Event):void {
@@ -50,11 +62,17 @@ public class FPSDisplay extends Sprite {
         }
 
         _memText.text = "Mem: " + int(System.totalMemory / 1024 / 1024);
+        _animationCountText.text = "Animations: " + _currentAnimationsCount  + "/" + _totalAnimationCount;
+        _animationCountText.width = _animationCountText.textWidth + 10;
     }
 
     private var _fpsCount : int;
     private var _intervalStartTime : Number;
     private var _memText : TextField;
     private var _fpstext:TextField;
+    private var _animationCountText:TextField;
+
+    private var _currentAnimationsCount : int = 0;
+    private var _totalAnimationCount : int = 0;
 }
 }

@@ -21,11 +21,14 @@ public interface IAnimationBound {
     /**
      * xDelta for the animation (used if any frame has X position lower than 0)
      */
-    function get xDelta () : int;
+    function get xMin () : int;
 
     /**
      * yDelta for the animation (used if any frame has Y position lower than 0)
      */
-    function get yDelta () : int;
+    function get yMin () : int;
+
+    function get xMax () : int;
+    function get yMax () : int;
 }
 }

@@ -11,22 +11,21 @@ import flash.display.BitmapData;
 import flash.display.Sprite;
 import flash.events.Event;
 
-public class PrerenderedMovieClip extends Sprite {
+public class PrerenderedMovieClip extends Sprite implements IPrerenderedMovieClip {
 
     public function PrerenderedMovieClip(bitmapDatas:Vector.<BitmapData>, animationBound:IAnimationBound) {
         _bitmapDatas = bitmapDatas;
         _animationBound = animationBound;
-        _currentDisplay.x = animationBound.xDelta;
-        _currentDisplay.y = animationBound.yDelta;
+        _currentDisplay.x = animationBound.xMin;
+        _currentDisplay.y = animationBound.yMin;
         this.addChild(_currentDisplay);
-        this.addEventListener(Event.ADDED_TO_STAGE, onAdded, false, 0, true);
     }
 
-    public function play () : void {
+    public function play():void {
         this.addEventListener(Event.ENTER_FRAME, onEnterframe);
     }
 
-    public function stop () : void {
+    public function stop():void {
         this.removeEventListener(Event.ENTER_FRAME, onEnterframe);
     }
 
@@ -34,19 +33,16 @@ public class PrerenderedMovieClip extends Sprite {
         _currentFrame = (frameIndex) % _bitmapDatas.length;
         var bitmapData:BitmapData = _bitmapDatas[_currentFrame];
         if (bitmapData != null) {
-            _currentDisplay.bitmapData = bitmapData;
-        }
+            _currentDisplay.bitmapData = bitmapData
+        };
     }
 
-    public function clone():PrerenderedMovieClip {
+    public function clone():IPrerenderedMovieClip {
         return new PrerenderedMovieClip(_bitmapDatas, _animationBound);
     }
 
     public function dispose():void {
         stop();
-        this.removeEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
-        this.removeEventListener(Event.ADDED_TO_STAGE, onAdded);
-
         this.removeChild(_currentDisplay);
         _currentDisplay.bitmapData = null;
         _currentDisplay = null;
@@ -54,14 +50,8 @@ public class PrerenderedMovieClip extends Sprite {
         _animationBound = null;
     }
 
-    private function onAdded(event:Event):void {
-        this.removeEventListener(Event.ADDED_TO_STAGE, onAdded);
-        this.addEventListener(Event.REMOVED_FROM_STAGE, onRemoved, false, 0, true);
-    }
-
-    private function onRemoved(event:Event):void {
-        this.removeEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
-        this.addEventListener(Event.ADDED_TO_STAGE, onAdded, false, 0, true);
+    public function get totalFrames():int {
+        return _bitmapDatas.length;
     }
 
     private function onEnterframe(event:Event):void {
