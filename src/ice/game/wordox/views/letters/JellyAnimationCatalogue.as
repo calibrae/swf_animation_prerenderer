@@ -5,8 +5,7 @@
  * Time: 17:28
  * To change this template use File | Settings | File Templates.
  */
-package ice.tools.display.prerenderer {
-
+package ice.game.wordox.views.letters {
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
@@ -16,14 +15,12 @@ import flash.events.EventDispatcher;
 import flash.system.ApplicationDomain;
 import flash.utils.getQualifiedClassName;
 
-import ice.wordox.gfx.JellyBirthAnimation;
-import ice.wordox.gfx.JellyBreathingAnimation;
-import ice.wordox.gfx.JellyDropAnimation;
-import ice.wordox.gfx.JellyMovingAnimation;
-import ice.wordox.gfx.JellyOutAnimation;
-import ice.wordox.gfx.JellyOverAnimation;
-import ice.wordox.gfx.JellyStealingAnimation;
-import ice.wordox.gfx.JellyWinAnimation;
+import ice.tools.display.prerenderer.CompositePrerenderedClip;
+import ice.tools.display.prerenderer.IAnimationBound;
+import ice.tools.display.prerenderer.IPrerenderedMovieClip;
+import ice.tools.display.prerenderer.MovieClipConversionUtils;
+import ice.tools.display.prerenderer.PrerenderedMovieClipEvent;
+import ice.tools.display.prerenderer.PrerenderedMovieClipWorker;
 
 public class JellyAnimationCatalogue extends EventDispatcher{
 
@@ -32,8 +29,8 @@ public class JellyAnimationCatalogue extends EventDispatcher{
     }
 
     public function initializeAllMovieclip():void {
-        while (_jelliesClass.length > 0) {
-            initializeMovieclip(_jelliesClass.pop());
+        for each (var animationEnum : EJellyAnimation in _jelliesClass) {
+            initializeMovieclip(animationEnum);
         }
     }
 
@@ -57,7 +54,7 @@ public class JellyAnimationCatalogue extends EventDispatcher{
         return _worker.currentSize;
     }
 
-    private function initializeMovieclip(animationClass:Class):void {
+    private function initializeMovieclip(animationEnum:EJellyAnimation):void {
         _worker.addEventListener(PrerenderedMovieClipEvent.PRERENDER_END, onPrerenderEnd);
         var animationBounds:IAnimationBound;
 
@@ -66,7 +63,7 @@ public class JellyAnimationCatalogue extends EventDispatcher{
 
             // Path for wox animation, by player:
             var _overlaySprite:Sprite = new Sprite();
-            var jellyAnimation:MovieClip = new animationClass();
+            var jellyAnimation:MovieClip = new (animationEnum.animationClass)();
             try {
                 jellyAnimation ["overlayClip"].addChild(_overlaySprite);
             } catch (error:Error) {
@@ -92,7 +89,7 @@ public class JellyAnimationCatalogue extends EventDispatcher{
 
         for (var iLetterIndex : uint = 0; iLetterIndex < _LETTERS_CODES.length; iLetterIndex++) {
             // Path for letter animation:
-            var jellyAnimation:MovieClip = new animationClass();
+            var jellyAnimation:MovieClip = new (animationEnum.animationClass)();
             jellyAnimation.graphics.clear();
             for (var iAnimationChildIndex : int = 0; iAnimationChildIndex < jellyAnimation.numChildren; iAnimationChildIndex++) {
                 var child:DisplayObject = jellyAnimation.getChildAt(iAnimationChildIndex);
@@ -131,10 +128,18 @@ public class JellyAnimationCatalogue extends EventDispatcher{
     }
 
     private const _playersColor:Array = [0x1DA7E0, 0x76CF26, 0xEA4CA1, 0xFEA421];
+
+    [ArrayElementType("ice.game.wordox.views.letters.EJellyAnimation")]
     private const _jelliesClass:Array =
-//            [JellyStealingAnimation];
-            [JellyBirthAnimation, JellyDropAnimation, JellyMovingAnimation, JellyOutAnimation, JellyOverAnimation
-        , JellyBreathingAnimation, JellyStealingAnimation, JellyWinAnimation];
+            [EJellyAnimation.BIRTH_ANIMATION
+                , EJellyAnimation.DROP_ANIMATION
+                , EJellyAnimation.MOVING_ANIMATION
+                , EJellyAnimation.OUT_ANIMATION
+                , EJellyAnimation.OVER_ANIMATION
+                , EJellyAnimation.BREATHING_ANIMATION
+                , EJellyAnimation.STEALING_ANIMATION
+                , EJellyAnimation.WIN_ANIMATION];
+
     private static const _LETTER_SIZE:int = 45;
 
     private static const _letterClassPrefix:String = "ice.wordox.gfx.LetterCode";

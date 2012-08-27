@@ -6,19 +6,13 @@ import flash.display.StageScaleMode;
 import flash.events.Event;
 import flash.utils.getTimer;
 
+import ice.game.wordox.views.letters.EJellyAnimation;
+import ice.game.wordox.views.letters.JellyAnimationCatalogue;
 import ice.tools.display.prerenderer.IPrerenderedMovieClip;
 import ice.tools.display.prerenderer.JellyAnimation;
-import ice.tools.display.prerenderer.JellyAnimationCatalogue;
 import ice.tools.display.prerenderer.PrerenderedMovieClipEvent;
 import ice.tools.display.prerenderer.PrerenderedMovieClipWorker;
 import ice.tools.display.tools.FPSDisplay;
-import ice.wordox.gfx.JellyBirthAnimation;
-import ice.wordox.gfx.JellyBreathingAnimation;
-import ice.wordox.gfx.JellyDropAnimation;
-import ice.wordox.gfx.JellyMovingAnimation;
-import ice.wordox.gfx.JellyOutAnimation;
-import ice.wordox.gfx.JellyOverAnimation;
-import ice.wordox.gfx.JellyStealingAnimation;
 import ice.wordox.gfx.JellyWinAnimation;
 
 [SWF(frameRate="32", width="1050", height="1050")]
@@ -103,7 +97,7 @@ public class Main extends Sprite {
                     trace("Start creation at " + startCreation);
                 }
 
-                var jellyClass:Class = _jelliesClass[Math.floor(Math.random() * _jelliesClass.length)];
+                var jellyClass:Class = _jelliesClass[Math.floor(Math.random() * _jelliesClass.length)].animationClass;
                 animation = new jellyClass();
 
                 if (colIndex == 0 && rowIndex == 0) {
@@ -133,7 +127,7 @@ public class Main extends Sprite {
                     trace("Start creation at " + startCreation);
                 }
 
-                var jellyClass:Class = _jelliesClass[Math.floor(Math.random() * _jelliesClass.length)];
+                var jellyClass:Class = _jelliesClass[Math.floor(Math.random() * _jelliesClass.length)].animationClass;
                 animation = _jellyCatalogue.getJellyAnimation(jellyClass, (Math.random() * 4), Math.random() * 29 + 1);
 
                 if (colIndex == 0 && rowIndex == 0) {
@@ -153,9 +147,16 @@ public class Main extends Sprite {
     private var _jelliesAnimations:Vector.<JellyAnimation>
             = new Vector.<JellyAnimation>();
 
+    [ArrayElementType("ice.game.wordox.views.letters.EJellyAnimation")]
     private const _jelliesClass:Array =
-            [JellyBirthAnimation, JellyDropAnimation, JellyMovingAnimation, JellyOutAnimation, JellyOverAnimation
-                , JellyBreathingAnimation, JellyStealingAnimation, JellyWinAnimation];
+            [EJellyAnimation.BIRTH_ANIMATION
+                , EJellyAnimation.DROP_ANIMATION
+                , EJellyAnimation.MOVING_ANIMATION
+                , EJellyAnimation.OUT_ANIMATION
+                , EJellyAnimation.OVER_ANIMATION
+                , EJellyAnimation.BREATHING_ANIMATION
+                , EJellyAnimation.STEALING_ANIMATION
+                , EJellyAnimation.WIN_ANIMATION];
 
     private var _currentDisplayMode:int = 0;
     private var _fpsDisplay:FPSDisplay;

@@ -34,7 +34,7 @@ public class MovieClipConversionUtils {
 
 
 
-        var controlClip = basedOnParent == null ? animation : basedOnParent;
+        var controlClip : MovieClip = basedOnParent == null ? animation : basedOnParent;
         var animationLength:int = controlClip.totalFrames;
         _boundControlBufferSprite.addChild(controlClip);
 
