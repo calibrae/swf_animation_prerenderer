@@ -6,6 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 package ice.tools.display.prerenderer {
+import flash.display.BitmapData;
 import flash.events.IEventDispatcher;
 
 [Event(type="ice.tools.display.prerenderer.PrerenderedMovieClipEvent", name="animationEnd")]
@@ -19,6 +20,8 @@ public interface IPrerenderedMovieClip extends IEventDispatcher{
     function clone():IPrerenderedMovieClip;
 
     function dispose():void;
+
+    function get frames () : Vector.<BitmapData>;
 
     function get currentFrame():int;
     function get totalFrames():int;

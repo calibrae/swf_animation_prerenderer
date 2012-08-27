@@ -11,8 +11,13 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.geom.Point;
 import flash.geom.Rectangle;
+import flash.net.FileReference;
+import flash.utils.ByteArray;
 import flash.utils.getTimer;
+
+import mx.graphics.codec.PNGEncoder;
 
 public class MovieClipConversionUtils {
     public static const MOVIECLIP_FPS:int = 32;
@@ -32,9 +37,7 @@ public class MovieClipConversionUtils {
         var startTime:Number = getTimer();
 
 
-
-
-        var controlClip : MovieClip = basedOnParent == null ? animation : basedOnParent;
+        var controlClip:MovieClip = basedOnParent == null ? animation : basedOnParent;
         var animationLength:int = controlClip.totalFrames;
         _boundControlBufferSprite.addChild(controlClip);
 
@@ -44,8 +47,8 @@ public class MovieClipConversionUtils {
                 , maxHeight:Number = bounds.height
                 , xDelta:Number = bounds.x
                 , yDelta:Number = bounds.y
-                , xMax : Number = bounds.x + bounds.width
-                , yMax : Number = bounds.y + bounds.height;
+                , xMax:Number = bounds.x + bounds.width
+                , yMax:Number = bounds.y + bounds.height;
 
         for (var i:int = 0; i < animationLength; i++) {
 
@@ -87,6 +90,47 @@ public class MovieClipConversionUtils {
         return currentProcessing;
     }
 
+    public static function generateAtlas(prerenderedMovieclip:PrerenderedMovieClip, size:int):Vector.<BitmapData> {
+        var result:Vector.<BitmapData> = new Vector.<BitmapData>();
+        var currentBitmap:BitmapData = new BitmapData(size, size, true, 0);
+        result.push(currentBitmap);
+
+        var bound:Rectangle = new Rectangle(0, 0, prerenderedMovieclip.frames[0].width, prerenderedMovieclip.frames[0].height);
+        var currentCol:int = 0;
+        var currentRow:int = 0;
+        var maxCols:int = Math.floor(size / bound.width) - 1;
+        var maxRows:int = Math.floor(size / bound.height) - 1;
+
+        for (var i:uint = 0; i < prerenderedMovieclip.frames.length; i++) {
+            var bitmapData:BitmapData = prerenderedMovieclip.frames[i];
+            currentBitmap.copyPixels(bitmapData, bound, new Point(currentCol * bound.width, currentRow * bound.height));
+
+            if (currentCol == maxCols) {
+
+                if (currentRow == maxRows) {
+                    var currentBitmap:BitmapData = new BitmapData(size, size, true, 0);
+                    result.push(currentBitmap);
+                }
+                currentCol = 0;
+                currentRow++;
+            } else {
+                currentCol++;
+            }
+        }
+        return result;
+    }
+
+    public static function generatePngAtlas(prerenderedMovieclip:PrerenderedMovieClip, size:int):Vector.<ByteArray> {
+        var atlases : Vector.<BitmapData> = generateAtlas(prerenderedMovieclip, size);
+        var result : Vector.<ByteArray> = new Vector.<ByteArray>();
+        var encoder : PNGEncoder = new PNGEncoder();
+        for (var i : uint = 0; i < atlases.length; i++) {
+            result.push(encoder.encode(atlases[i]));
+        }
+
+        return result;
+    }
+
 
     /**
      * Generate a bitmap data for a movieclip frame
@@ -97,7 +141,7 @@ public class MovieClipConversionUtils {
      */
     private static function generateBitmapForFrame(animation:MovieClip, animationBound:IAnimationBound, frameIndex:uint):BitmapData {
         var bitmapData:BitmapData = new BitmapData(
-                animationBound.xMax -animationBound.xMin
+                animationBound.xMax - animationBound.xMin
                 , animationBound.yMax - animationBound.yMin, true, 0);
 
         animation.gotoAndStop(frameIndex);
@@ -217,8 +261,8 @@ class AnimationBoundImpl implements IAnimationBound {
     private var _maxHeight:Number;
     private var _xDelta:Number;
     private var _yDelta:Number;
-    private var _xMax : Number;
-    private var _yMax : Number;
+    private var _xMax:Number;
+    private var _yMax:Number;
 
 }
 

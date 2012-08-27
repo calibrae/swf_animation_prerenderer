@@ -59,6 +59,10 @@ public class PrerenderedMovieClip extends Sprite implements IPrerenderedMovieCli
         return _currentFrame;
     }
 
+    public function get frames () :Vector.<BitmapData> {
+        return _bitmapDatas;
+    }
+
     public function get totalFrames():int {
         return _bitmapDatas.length;
     }

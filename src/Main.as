@@ -1,16 +1,21 @@
 package {
 
+import flash.display.Bitmap;
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.StageScaleMode;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.utils.ByteArray;
+import flash.utils.getQualifiedClassName;
 import flash.utils.getTimer;
 
 import ice.game.wordox.views.letters.EJellyAnimation;
 import ice.game.wordox.views.letters.JellyAnimation;
 import ice.game.wordox.views.letters.JellyAnimationCatalogue;
 import ice.game.wordox.views.progressbar.Progressbar;
+import ice.tools.display.prerenderer.MovieClipConversionUtils;
 import ice.tools.display.prerenderer.PrerenderedMovieClipEvent;
 import ice.tools.display.prerenderer.PrerenderedMovieClipWorker;
 import ice.tools.display.tools.FPSDisplay;
@@ -77,8 +82,16 @@ public class Main extends Sprite {
     }
 
     private function displayPrerendered () : void {
-        addRows(1);
+        var animationName : String = getQualifiedClassName(EJellyAnimation.STEALING_ANIMATION.animationClass) + "_" + 0;
+        var pngs : Vector.<ByteArray> = MovieClipConversionUtils.generatePngAtlas(_prerenderedMovieClipWorker.getAnimation(animationName), 1500);
+        var size : int = 0;
+
+        for each (var bytes : ByteArray in pngs) {
+            size += bytes.length;
+        }
+        trace("PNG Total size : " + size);
     }
+
     private function addRows(rowsCount : int):void {
 
         var firstCreationEnd:int;

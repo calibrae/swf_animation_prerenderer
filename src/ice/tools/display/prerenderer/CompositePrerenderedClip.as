@@ -6,6 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 package ice.tools.display.prerenderer {
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.Event;
@@ -87,6 +88,10 @@ public class CompositePrerenderedClip extends Sprite implements IPrerenderedMovi
 
     public function get totalFrames():int {
         return _totalFrames;
+    }
+
+    public function get frames():Vector.<BitmapData> {
+        return null;
     }
 
     private var _lastFrameTime:Number;
