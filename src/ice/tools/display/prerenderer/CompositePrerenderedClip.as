@@ -52,6 +52,9 @@ public class CompositePrerenderedClip extends Sprite implements IPrerenderedMovi
         while(_children.length > 0) {
             _children.pop().dispose();
         }
+        while (numChildren > 0) {
+            removeChildAt(0);
+        }
         _totalFrames = 0;
         _currentFrame = 0;
     }

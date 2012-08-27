@@ -15,9 +15,7 @@ import flash.events.EventDispatcher;
 import flash.system.ApplicationDomain;
 import flash.utils.getQualifiedClassName;
 
-import ice.tools.display.prerenderer.CompositePrerenderedClip;
 import ice.tools.display.prerenderer.IAnimationBound;
-import ice.tools.display.prerenderer.IPrerenderedMovieClip;
 import ice.tools.display.prerenderer.MovieClipConversionUtils;
 import ice.tools.display.prerenderer.PrerenderedMovieClipEvent;
 import ice.tools.display.prerenderer.PrerenderedMovieClipWorker;
@@ -34,16 +32,8 @@ public class JellyAnimationCatalogue extends EventDispatcher{
         }
     }
 
-    public function getJellyAnimation (animationClass : Class, playerSeat : int,  letterCode : int) : IPrerenderedMovieClip {
-        var containerMovieClip : CompositePrerenderedClip = new CompositePrerenderedClip();
-
-        var woxAnimationName:String = getQualifiedClassName(animationClass)+ "_"  + playerSeat; //  + "_ice.wordox.gfx::LetterCode15";//
-        var letterAnimationName:String = getQualifiedClassName(animationClass)+ "_LETTER" + letterCode; //  + "_ice.wordox.gfx::LetterCode15";//
-
-        containerMovieClip.addPrerenderedChild(_worker.getAnimation (woxAnimationName).clone());
-        containerMovieClip.addPrerenderedChild(_worker.getAnimation(letterAnimationName).clone());
-        containerMovieClip.play();
-        return containerMovieClip;
+    public function getJellyAnimation (letterIndex : int) : JellyAnimation {
+        return new JellyAnimation(_worker, letterIndex);
     }
 
     public function get cataloguetotalSize () : int {

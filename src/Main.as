@@ -8,7 +8,6 @@ import flash.utils.getTimer;
 
 import ice.game.wordox.views.letters.EJellyAnimation;
 import ice.game.wordox.views.letters.JellyAnimationCatalogue;
-import ice.tools.display.prerenderer.IPrerenderedMovieClip;
 import ice.tools.display.prerenderer.JellyAnimation;
 import ice.tools.display.prerenderer.PrerenderedMovieClipEvent;
 import ice.tools.display.prerenderer.PrerenderedMovieClipWorker;
@@ -118,7 +117,7 @@ public class Main extends Sprite {
         _currentDisplayMode = 1;
 
         var firstCreationEnd:int;
-        var animation:IPrerenderedMovieClip;
+        var animation:ice.game.wordox.views.letters.JellyAnimation;
 
         for (var colIndex:uint = 0; colIndex < SIZE; colIndex++) {
             for (var rowIndex:uint = 0; rowIndex < SIZE; rowIndex++) {
@@ -127,17 +126,18 @@ public class Main extends Sprite {
                     trace("Start creation at " + startCreation);
                 }
 
-                var jellyClass:Class = _jelliesClass[Math.floor(Math.random() * _jelliesClass.length)].animationClass;
-                animation = _jellyCatalogue.getJellyAnimation(jellyClass, (Math.random() * 4), Math.random() * 29 + 1);
+                var jellyAnimation:EJellyAnimation = _jelliesClass[Math.floor(Math.random() * _jelliesClass.length)];
+                animation = _jellyCatalogue.getJellyAnimation(Math.random() * 29 + 1);
+                animation.updateAnimation(jellyAnimation, Math.random() * 4);
 
                 if (colIndex == 0 && rowIndex == 0) {
                     firstCreationEnd = getTimer();
                     trace("First creation duration " + (firstCreationEnd - startCreation) + "ms");
                 }
-                DisplayObject(animation).y = rowIndex * 50 + 50;
-                DisplayObject(animation).x = colIndex * 50 + 50;
+                (animation).y = rowIndex * 50 + 50;
+                (animation).x = colIndex * 50 + 50;
 //                    DisplayObject(animation).scaleX = DisplayObject(animation).scaleY = 0.5;
-                addChild(DisplayObject(animation));
+                addChild((animation));
             }
         }
 
