@@ -26,6 +26,7 @@ package {
 	[SWF(frameRate="32", width="2500", height="2500")]
 	public class Main extends Sprite {
 
+
 		public function Main() {
 
 			this.stage.scaleMode = StageScaleMode.NO_SCALE;
