@@ -23,10 +23,8 @@ public class FPSDisplay extends Sprite {
         this.addChild(_memText);
         _animationCountText.y = 28;
         this.addChild(_animationCountText);
-        _memText.background = _fpstext.background = _animationCountText.background = true;
 
         _fpstext.width = _memText.width = _animationCountText.width = 200;
-        _fpstext.backgroundColor = _memText.backgroundColor = _animationCountText.backgroundColor = 0xFFFFFF;
         _fpstext.defaultTextFormat = _memText.defaultTextFormat = _animationCountText.defaultTextFormat = _textFormat;
 
         this.addEventListener(Event.ADDED_TO_STAGE, onAdded, false, 0, true);
