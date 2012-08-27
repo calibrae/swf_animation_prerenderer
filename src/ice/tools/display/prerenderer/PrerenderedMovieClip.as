@@ -34,8 +34,8 @@ public class PrerenderedMovieClip extends Sprite implements IPrerenderedMovieCli
         _currentFrame = (frameIndex) % _bitmapDatas.length;
         var bitmapData:BitmapData = _bitmapDatas[_currentFrame];
         if (bitmapData != null) {
-            _currentDisplay.bitmapData = bitmapData
-        };
+            _currentDisplay.bitmapData = bitmapData;
+        }
 
         if (_currentFrame == totalFrames) {
             dispatchEvent(new PrerenderedMovieClipEvent(PrerenderedMovieClipEvent.ANIMATION_END));

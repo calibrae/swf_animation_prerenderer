@@ -16,7 +16,7 @@ import ice.tools.display.prerenderer.PrerenderedMovieClipWorker;
 import ice.tools.display.tools.FPSDisplay;
 import ice.wordox.gfx.JellyWinAnimation;
 
-[SWF(frameRate="32", width="1500", height="1500")]
+[SWF(frameRate="32", width="2500", height="2500")]
 public class Main extends Sprite {
     public function Main() {
 
@@ -65,8 +65,9 @@ public class Main extends Sprite {
     }
 
     private function onClick(event:Event):void {
+        addRows(1);
+        return;
         for (var animIndex:uint = 0; animIndex < _jelliesAnimations.length; animIndex++) {
-
             _jelliesAnimations[animIndex].updateAnimation(
                     _jelliesAnimations[animIndex].jellyAnimation
             //        _jelliesClass[Math.floor(Math.random() * _jelliesClass.length)]
@@ -75,13 +76,16 @@ public class Main extends Sprite {
 
     }
 
-    private function displayPrerendered():void {
+    private function displayPrerendered () : void {
+        addRows(1);
+    }
+    private function addRows(rowsCount : int):void {
 
         var firstCreationEnd:int;
         var animation:JellyAnimation;
 
         for (var colIndex:uint = 0; colIndex < SIZE; colIndex++) {
-            for (var rowIndex:uint = 0; rowIndex < SIZE; rowIndex++) {
+            for (var rowIndex:uint = _currentRowsCount; rowIndex < _currentRowsCount + rowsCount; rowIndex++) {
                 if (colIndex == 0 && rowIndex == 0) {
                     var startCreation:int = getTimer();
                     trace("Start creation at " + startCreation);
@@ -101,7 +105,7 @@ public class Main extends Sprite {
                 _jelliesAnimations.push(animation);
             }
         }
-
+        _currentRowsCount += rowsCount;
         return;
     }
 
@@ -120,7 +124,8 @@ public class Main extends Sprite {
                 , EJellyAnimation.WIN_ANIMATION];
 
     private var _fpsDisplay:FPSDisplay;
-    private static const SIZE:int = 40;
+    private static const SIZE:int = 20;
+    private var _currentRowsCount : int = 0;
 
 
     private var _prerenderingStartTime : Number;
