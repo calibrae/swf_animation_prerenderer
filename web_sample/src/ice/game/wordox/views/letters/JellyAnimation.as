@@ -27,6 +27,10 @@ public class JellyAnimation extends Sprite {
         return _jellyAnimation;
     }
 
+    public function get playerSeat():int {
+        return _playerSeat;
+    }
+
     public function updateAnimation (jellyAnimation : EJellyAnimation, playerSeat : int) : void {
         // If only the player has changed, we will continue playing animation from the actual frame:
         var startFrameIndex : int = 0;
@@ -37,6 +41,7 @@ public class JellyAnimation extends Sprite {
             _jellyAnimation = jellyAnimation;
         }
 
+        _internalMovieClip.stop();
         _internalMovieClip.dispose();
         _playerSeat = playerSeat;
 
@@ -54,5 +59,6 @@ public class JellyAnimation extends Sprite {
     private var _jellyAnimation : EJellyAnimation;
     private var _letterIndex : int = -1;
     private var _animationCatalogue : PrerenderedMovieClipWorker;
+
 }
 }

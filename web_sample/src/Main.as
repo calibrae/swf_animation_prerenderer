@@ -4,7 +4,9 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.StageScaleMode;
 import flash.events.Event;
+import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
+import flash.ui.Keyboard;
 import flash.utils.getTimer;
 
 import ice.game.wordox.views.letters.EJellyAnimation;
@@ -18,6 +20,7 @@ import ice.wordox.gfx.JellyWinAnimation;
 
 [SWF(frameRate="32", width="2500", height="2500")]
 public class Main extends Sprite {
+
     public function Main() {
 
         this.stage.scaleMode = StageScaleMode.NO_SCALE;
@@ -62,18 +65,61 @@ public class Main extends Sprite {
         }
         displayPrerendered();
         this.addEventListener(MouseEvent.CLICK, onClick);
+        this.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyboard);
+    }
+
+    private function onKeyboard(event:KeyboardEvent):void {
+        if (event.keyCode == Keyboard.PAGE_UP && !_isAutoSwitching) {
+            this.addEventListener(Event.ENTER_FRAME, autoSwitchPlayers);
+            _isAutoSwitching = true;
+            return;
+        }
+
+        if (event.keyCode == Keyboard.PAGE_DOWN) {
+            this.removeEventListener(Event.ENTER_FRAME, autoSwitchPlayers);
+            _isAutoSwitching = false;
+            return;
+        }
+
+        for (var animIndex:uint = 0; animIndex < _jelliesAnimations.length; animIndex++) {
+
+            var myJelly:JellyAnimation = _jelliesAnimations[animIndex];
+
+            var animation : EJellyAnimation = myJelly.jellyAnimation;
+            var player : int = myJelly.playerSeat;
+
+
+            if (event.keyCode == Keyboard.UP) {
+                var number:int = Math.random() * _jelliesClass.length;
+                animation = _jelliesClass[number];
+            }
+
+            if (event.keyCode == Keyboard.DOWN) {
+                player =  Math.random() * 4;
+            }
+
+            myJelly.updateAnimation(
+                    animation
+                    , player);
+        }
+    }
+
+    private function autoSwitchPlayers(event:Event):void {
+        for (var animIndex:uint = 0; animIndex < _jelliesAnimations.length; animIndex++) {
+
+            var myJelly:JellyAnimation = _jelliesAnimations[animIndex];
+
+            var animation : EJellyAnimation = myJelly.jellyAnimation;
+            var player : int = Math.random() * 4;
+
+            myJelly.updateAnimation(
+                    animation
+                    , player);
+        }
     }
 
     private function onClick(event:Event):void {
         addRows(1);
-        return;
-        for (var animIndex:uint = 0; animIndex < _jelliesAnimations.length; animIndex++) {
-            _jelliesAnimations[animIndex].updateAnimation(
-                    _jelliesAnimations[animIndex].jellyAnimation
-            //        _jelliesClass[Math.floor(Math.random() * _jelliesClass.length)]
-                    , Math.random() * 4);
-        }
-
     }
 
     private function displayPrerendered () : void {
@@ -134,6 +180,7 @@ public class Main extends Sprite {
     private var _prerenderedMovieClipWorker:PrerenderedMovieClipWorker;
     private var _waitingAnimation:DisplayObject;
     private var _progressbar:Progressbar;
+    private var _isAutoSwitching:Boolean = false;
 }
 
 }

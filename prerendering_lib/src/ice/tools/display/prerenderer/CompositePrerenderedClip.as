@@ -27,10 +27,18 @@ public class CompositePrerenderedClip extends Sprite implements IPrerenderedMovi
     }
 
     public function play():void {
+        if (_isRunning) {
+            return;
+        }
+        _isRunning = true;
         this.addEventListener(Event.ENTER_FRAME, onEnterframe);
     }
 
     public function stop():void {
+        if (!_isRunning) {
+            return;
+        }
+        _isRunning = false;
         this.removeEventListener(Event.ENTER_FRAME, onEnterframe);
     }
 
@@ -48,7 +56,6 @@ public class CompositePrerenderedClip extends Sprite implements IPrerenderedMovi
                 frameToAdd = Math.floor(timeElapsed / FRAME_REQUEST_TIME) + 1;
             }
             _currentTimeDelta = timeElapsed - (frameToAdd * FRAME_REQUEST_TIME);
-            trace("Frame to add : " + frameToAdd + " - time delta: " + _currentTimeDelta);
         }
         _lastFrameTime = currentTime;
 
@@ -61,7 +68,7 @@ public class CompositePrerenderedClip extends Sprite implements IPrerenderedMovi
         for each (var child:IPrerenderedMovieClip in _children) {
             child.gotoFrame(frameIndex);
         }
-        if (_currentFrame == totalFrames) {
+        if (_currentFrame == totalFrames && hasEventListener(PrerenderedMovieClipEvent.ANIMATION_END)) {
             dispatchEvent(new PrerenderedMovieClipEvent(PrerenderedMovieClipEvent.ANIMATION_END));
         }
     }
@@ -94,6 +101,7 @@ public class CompositePrerenderedClip extends Sprite implements IPrerenderedMovi
         return null;
     }
 
+    private var _isRunning : Boolean = false;
     private var _lastFrameTime:Number;
     private var _currentTimeDelta:Number = 0;
     private var _currentFrame:int = 0;

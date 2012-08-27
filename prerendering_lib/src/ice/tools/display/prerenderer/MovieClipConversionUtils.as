@@ -39,12 +39,12 @@ public class MovieClipConversionUtils {
 
         controlClip.gotoAndStop(0);
         var bounds:Rectangle = animation.getBounds(basedOnParent == null ? _generationBufferSprite : basedOnParent);
-        var maxWidth:Number = bounds.width
-                , maxHeight:Number = bounds.height
-                , xDelta:Number = bounds.x
-                , yDelta:Number = bounds.y
-                , xMax:Number = bounds.x + bounds.width
-                , yMax:Number = bounds.y + bounds.height;
+        var maxWidth:int = bounds.width + 1
+                , maxHeight:int = bounds.height + 1
+                , xDelta:int = bounds.x
+                , yDelta:int = bounds.y
+                , xMax:int = bounds.x + bounds.width + 1
+                , yMax:int = bounds.y + bounds.height + 1;
 
         for (var i:int = 0; i < animationLength; i++) {
 
@@ -52,12 +52,12 @@ public class MovieClipConversionUtils {
             updateAnimationChildsFrames(controlClip, i);
             var bounds:Rectangle = animation.getBounds(basedOnParent == null ? _generationBufferSprite : basedOnParent);
 
-            maxWidth = Math.max(maxWidth, bounds.width);
-            maxHeight = Math.max(maxHeight, bounds.height);
+            maxWidth = Math.max(maxWidth, bounds.width + 1);
+            maxHeight = Math.max(maxHeight, bounds.height + 1);
             xDelta = Math.min(xDelta, bounds.x);
             yDelta = Math.min(yDelta, bounds.y);
-            xMax = Math.max(xMax, bounds.x + bounds.width);
-            yMax = Math.max(yMax, bounds.y + bounds.height);
+            xMax = Math.max(xMax, bounds.x + bounds.width + 1);
+            yMax = Math.max(yMax, bounds.y + bounds.height + 1);
         }
 
         _boundControlBufferSprite.removeChild(controlClip);
