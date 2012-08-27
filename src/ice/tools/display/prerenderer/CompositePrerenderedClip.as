@@ -44,6 +44,10 @@ public class CompositePrerenderedClip extends Sprite implements IPrerenderedMovi
         }
     }
 
+    public function get currentFrame():int {
+        return _currentFrame;
+    }
+
     public function clone():IPrerenderedMovieClip {
         return null;
     }

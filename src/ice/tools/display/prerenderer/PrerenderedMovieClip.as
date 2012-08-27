@@ -55,6 +55,10 @@ public class PrerenderedMovieClip extends Sprite implements IPrerenderedMovieCli
         _animationBound = null;
     }
 
+    public function get currentFrame():int {
+        return _currentFrame;
+    }
+
     public function get totalFrames():int {
         return _bitmapDatas.length;
     }

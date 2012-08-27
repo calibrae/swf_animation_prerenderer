@@ -20,6 +20,7 @@ public interface IPrerenderedMovieClip extends IEventDispatcher{
 
     function dispose():void;
 
+    function get currentFrame():int;
     function get totalFrames():int;
 }
 }

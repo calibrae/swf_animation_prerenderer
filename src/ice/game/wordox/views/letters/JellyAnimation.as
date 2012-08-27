@@ -22,17 +22,30 @@ public class JellyAnimation extends Sprite {
         _internalMovieClip.mouseChildren = false;
     }
 
+
+    public function get jellyAnimation():EJellyAnimation {
+        return _jellyAnimation;
+    }
+
     public function updateAnimation (jellyAnimation : EJellyAnimation, playerSeat : int) : void {
-        _jellyAnimation = jellyAnimation;
-        _playerSeat = playerSeat;
+        // If only the player has changed, we will continue playing animation from the actual frame:
+        var startFrameIndex : int = 0;
+
+        if (jellyAnimation == _jellyAnimation) {
+            startFrameIndex = _internalMovieClip.currentFrame;
+        } else {
+            _jellyAnimation = jellyAnimation;
+        }
 
         _internalMovieClip.dispose();
+        _playerSeat = playerSeat;
 
          var woxAnimationName:String = getQualifiedClassName(jellyAnimation.animationClass)+ "_"  + playerSeat; //  + "_ice.wordox.gfx::LetterCode15";//
          var letterAnimationName:String = getQualifiedClassName(jellyAnimation.animationClass)+ "_LETTER" + _letterIndex; //  + "_ice.wordox.gfx::LetterCode15";//
 
         _internalMovieClip.addPrerenderedChild(_animationCatalogue.getAnimation(woxAnimationName).clone());
         _internalMovieClip.addPrerenderedChild(_animationCatalogue.getAnimation(letterAnimationName).clone());
+        _internalMovieClip.gotoFrame(startFrameIndex);
         _internalMovieClip.play();
     }
 
