@@ -13,7 +13,6 @@ import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.EventDispatcher;
-import flash.events.IEventDispatcher;
 import flash.system.ApplicationDomain;
 import flash.utils.getQualifiedClassName;
 
@@ -28,8 +27,8 @@ import ice.wordox.gfx.JellyWinAnimation;
 
 public class JellyAnimationCatalogue extends EventDispatcher{
 
-    public function JellyAnimationCatalogue(eventdispatcher:IEventDispatcher) {
-        _worker = new PrerenderedMovieClipWorker(eventdispatcher, 10);
+    public function JellyAnimationCatalogue(worker : PrerenderedMovieClipWorker) {
+        _worker = worker;
     }
 
     public function initializeAllMovieclip():void {

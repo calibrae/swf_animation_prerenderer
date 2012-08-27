@@ -6,7 +6,10 @@
  * To change this template use File | Settings | File Templates.
  */
 package ice.tools.display.prerenderer {
-public interface IPrerenderedMovieClip {
+import flash.events.IEventDispatcher;
+
+[Event(type="ice.tools.display.prerenderer.PrerenderedMovieClipEvent", name="animationEnd")]
+public interface IPrerenderedMovieClip extends IEventDispatcher{
     function play():void;
 
     function stop():void;

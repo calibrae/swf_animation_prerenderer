@@ -11,6 +11,7 @@ import flash.events.Event;
 public class PrerenderedMovieClipEvent extends Event {
 
     public static const PRERENDER_END : String = "prerenderEnd";
+    public static const ANIMATION_END : String = "animationEnd";
 
     public function PrerenderedMovieClipEvent(type : String) {
         super(type);

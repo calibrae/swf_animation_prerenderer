@@ -114,10 +114,11 @@ import ice.tools.display.prerenderer.IAnimationDescription;
 
 class AnimationDescriptionImpl implements IAnimationDescription {
 
-	public function AnimationDescriptionImpl(name:String, movieClip:MovieClip, bounds:IAnimationBound) {
+	public function AnimationDescriptionImpl(name:String, movieClip:MovieClip, bounds:IAnimationBound, loopable : Boolean = true) {
 		_name = name;
 		_movieClip = movieClip;
 		_bounds = bounds;
+        _loopable = loopable;
 	}
 
 	public function get name():String {
@@ -132,6 +133,11 @@ class AnimationDescriptionImpl implements IAnimationDescription {
 		return _bounds;
 	}
 
+    public function get loopable():Boolean {
+        return _loopable;
+    }
+
+    private var _loopable : Boolean = true;
 	private var _name : String;
 	private var _movieClip : MovieClip;
 	private var _bounds : IAnimationBound;

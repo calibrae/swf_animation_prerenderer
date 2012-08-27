@@ -11,6 +11,7 @@ import flash.display.BitmapData;
 import flash.display.Sprite;
 import flash.events.Event;
 
+[Event(type="ice.tools.display.prerenderer.PrerenderedMovieClipEvent", name="animationEnd")]
 public class PrerenderedMovieClip extends Sprite implements IPrerenderedMovieClip {
 
     public function PrerenderedMovieClip(bitmapDatas:Vector.<BitmapData>, animationBound:IAnimationBound) {
@@ -35,6 +36,10 @@ public class PrerenderedMovieClip extends Sprite implements IPrerenderedMovieCli
         if (bitmapData != null) {
             _currentDisplay.bitmapData = bitmapData
         };
+
+        if (_currentFrame == totalFrames) {
+            dispatchEvent(new PrerenderedMovieClipEvent(PrerenderedMovieClipEvent.ANIMATION_END));
+        }
     }
 
     public function clone():IPrerenderedMovieClip {

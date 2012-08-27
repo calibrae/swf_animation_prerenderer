@@ -6,11 +6,12 @@
  * To change this template use File | Settings | File Templates.
  */
 package ice.tools.display.prerenderer {
-	import flash.display.MovieClip;
+import flash.display.MovieClip;
 
-	public interface IAnimationDescription {
+public interface IAnimationDescription {
 		function get name () : String;
 		function get movieClip () : MovieClip;
 		function get bounds () : IAnimationBound;
+        function get loopable () : Boolean;
 	}
 }

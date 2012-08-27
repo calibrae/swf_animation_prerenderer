@@ -10,6 +10,7 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.Event;
 
+[Event(type="ice.tools.display.prerenderer.PrerenderedMovieClipEvent", name="animationEnd")]
 public class CompositePrerenderedClip extends Sprite implements IPrerenderedMovieClip{
     public function CompositePrerenderedClip() {
     }
@@ -37,6 +38,9 @@ public class CompositePrerenderedClip extends Sprite implements IPrerenderedMovi
         _currentFrame = frameIndex;
         for each (var child : IPrerenderedMovieClip in _children) {
             child.gotoFrame(frameIndex);
+        }
+        if (_currentFrame == totalFrames) {
+            dispatchEvent(new PrerenderedMovieClipEvent(PrerenderedMovieClipEvent.ANIMATION_END));
         }
     }
 
