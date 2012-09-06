@@ -28,9 +28,6 @@ package ice.tools.display.prerenderer {
 		 * @see IAnimationBound
 		 */
 		public static function getMaxSize(animation:MovieClip, basedOnParent:MovieClip = null):IAnimationBound {
-			var startTime:Number = getTimer();
-
-
 			var controlClip:MovieClip = basedOnParent == null ? animation : basedOnParent;
 			var animationLength:int = controlClip.totalFrames;
 			_boundControlBufferSprite.addChild(controlClip);
@@ -48,7 +45,7 @@ package ice.tools.display.prerenderer {
 
 				controlClip.gotoAndStop(i);
 				updateAnimationChildsFrames(controlClip, i);
-				var bounds:Rectangle = animation.getBounds(basedOnParent == null ? _generationBufferSprite : basedOnParent);
+				bounds = animation.getBounds(basedOnParent == null ? _generationBufferSprite : basedOnParent);
 
 				maxWidth = Math.max(maxWidth, bounds.width + 1);
 				maxHeight = Math.max(maxHeight, bounds.height + 1);
@@ -60,7 +57,6 @@ package ice.tools.display.prerenderer {
 
 			_boundControlBufferSprite.removeChild(controlClip);
 
-			var duration:Number = getTimer() - startTime;
 			var animationBoundImpl:AnimationBoundImpl = new AnimationBoundImpl(
 					maxWidth
 					, maxHeight
@@ -72,7 +68,7 @@ package ice.tools.display.prerenderer {
 			return animationBoundImpl;
 		}
 
-		public static function generatePrerenderedMovieClip(movieClipInstance:MovieClip, animationBounds:IAnimationBound, animationDescription:IAnimationDescription, maxExecutionTime:int = 10):ICurrentProcessing {
+		public static function generatePrerenderedMovieClip(animationDescription:IAnimationDescription, maxExecutionTime:int = 10):ICurrentProcessing {
 			var currentProcessing:ICurrentProcessing = new CurrentProcessingImpl(false
 					, 0
 					, new Vector.<BitmapData>()
@@ -180,6 +176,8 @@ package ice.tools.display.prerenderer {
 			if (currentProcessing.currentFrame == animationDescription.movieClip.totalFrames) {
 				currentProcessing.isCompleted = true;
 				currentProcessing.finalAnimation = PrerenderedMovieClip.checkOut(currentProcessing.framesGenerated, animationDescription.bounds);
+			} else {
+				currentProcessing.currentFrame = processingIteration + 1;
 			}
 
 			return currentProcessing;

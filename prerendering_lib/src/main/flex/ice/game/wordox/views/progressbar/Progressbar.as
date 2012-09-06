@@ -15,27 +15,28 @@ import flash.text.TextFormat;
 public class Progressbar extends Sprite {
 
     public function Progressbar(width:int, height:int, prefixLabel:String = "", showPercent:Boolean = false) {
-        _progressHeight = height;
-        _progressWidth = width;
-        _prefixLabel = prefixLabel;
-        _showPercent = showPercent;
-        _backgroundSprite = new Sprite();
-        _textSprite = new Sprite();
+		_progressHeight = height;
+		_progressWidth = width;
+		_prefixLabel = prefixLabel;
+		_showPercent = showPercent;
+		_backgroundSprite = new Sprite();
+		var textSprite:Sprite = new Sprite();
 
-        this.addChild(_backgroundSprite);
-        this.addChild(_textSprite);
+		this.addChild(_backgroundSprite);
+		this.addChild(textSprite);
 
-        _labelTextfield = new TextField();
-        _labelTextfield.defaultTextFormat = new TextFormat("arial", 12, 0xFFFFFF, true, null, null, null, null, "center");
-        _labelTextfield.width = width;
-        _labelTextfield.height = height;
-        _labelTextfield.filters = [new GlowFilter(0x1DA7E0, 1, 4, 4)];
-        _textSprite.addChild(_labelTextfield);
+		_labelTextfield = new TextField();
+		_labelTextfield.defaultTextFormat = new TextFormat("arial", 12, 0xFFFFFF, true, null, null, null, null,
+				"center");
+		_labelTextfield.width = width;
+		_labelTextfield.height = height;
+		_labelTextfield.filters = [new GlowFilter(0x1DA7E0, 1, 4, 4)];
+		textSprite.addChild(_labelTextfield);
 
-        this.mouseChildren = this.mouseEnabled = false;
+		this.mouseChildren = this.mouseEnabled = false;
 
-        refreshBar();
-    }
+		refreshBar();
+	}
 
     public function updateValue(currentValue:int, maxValue:int):void {
         _currentValue = currentValue;
@@ -58,8 +59,6 @@ public class Progressbar extends Sprite {
         graphics.endFill();
 
         graphics.beginFill(0x1DA7E0);
-        var maxSize:int = _progressWidth - _INTERNAL_DELTA * 2;
-        var currentWidth:int = maxSize * _currentValue / _maxValue;
         graphics.drawRoundRect(_INTERNAL_DELTA, _INTERNAL_DELTA, currentWidth, _progressHeight - _INTERNAL_DELTA * 2, _ELLIPSE - 4, _ELLIPSE - 4);
         graphics.endFill();
 
@@ -72,7 +71,6 @@ public class Progressbar extends Sprite {
     }
 
     private var _backgroundSprite: Sprite;
-    private var _textSprite : Sprite;
 
     private var _progressWidth:int;
     private var _progressHeight:int;

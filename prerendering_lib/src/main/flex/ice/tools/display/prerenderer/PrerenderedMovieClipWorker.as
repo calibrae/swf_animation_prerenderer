@@ -97,7 +97,7 @@ package ice.tools.display.prerenderer {
 		private function execute():void {
 			if (_currentProcessing == null) {
 				var animationDescription : IAnimationDescription = _animationsQueues.shift();
-				_currentProcessing = MovieClipConversionUtils.generatePrerenderedMovieClip(animationDescription.movieClip, animationDescription.bounds, animationDescription, _maxExecutionTime);
+				_currentProcessing = MovieClipConversionUtils.generatePrerenderedMovieClip(animationDescription, _maxExecutionTime);
 			} else {
 				MovieClipConversionUtils.continueProcessing(_currentProcessing, _maxExecutionTime);
 			}
