@@ -8,108 +8,120 @@
 
 
 package ice.tools.display.prerenderer {
-import flash.display.MovieClip;
-import flash.events.Event;
-import flash.events.EventDispatcher;
-import flash.events.IEventDispatcher;
-import flash.utils.Dictionary;
-import flash.utils.getTimer;
+	import flash.display.MovieClip;
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	import flash.events.IEventDispatcher;
+	import flash.utils.Dictionary;
+	import flash.utils.getTimer;
 
-[Event(type="ice.tools.display.prerenderer.PrerenderedMovieClipEvent", name="prerenderEnd")]
-public class PrerenderedMovieClipWorker extends EventDispatcher {
-    public function PrerenderedMovieClipWorker(eventDispatcher:IEventDispatcher, maxExecutionTime : int) {
-        _eventDispatcher = eventDispatcher;
-		_maxExecutionTime  = maxExecutionTime;
-    }
+	[Event(type="ice.tools.display.prerenderer.PrerenderedMovieClipEvent", name="prerenderEnd")]
+	public class PrerenderedMovieClipWorker extends EventDispatcher implements IPrerenderedMovieClipWorker {
 
-    public function get totalAnimations():int {
-        return _totalSize;
-    }
-
-    public function get currentSize() : int {
-        return _currentSize;
-    }
-
-    private function start():void {
-		if (_running) {
-			return;
+		public function PrerenderedMovieClipWorker(eventDispatcher:IEventDispatcher, maxExecutionTime : int) {
+			_eventDispatcher = eventDispatcher;
+			_maxExecutionTime  = maxExecutionTime;
 		}
-		_running = true;
-        _eventDispatcher.addEventListener(Event.ENTER_FRAME, onEnterFrameEnable, false, int.MIN_VALUE);
-    }
 
-	private function stop() : void {
-		if (!_running) {
-			return;
+		public function get totalAnimations():int {
+			return _totalSize;
 		}
-		_eventDispatcher.removeEventListener(Event.ENTER_FRAME, onEnterFrameEnable);
-		_running = false;
 
-		trace("PrerenderedMovieClipWorker halted. \n\tAnimations List:");
-		for (var keyName : String in _prerenderedAnimations) {
-			trace("\t\t* " + keyName + " -> " + PrerenderedMovieClip(_prerenderedAnimations[keyName]).totalFrames + " frames");
+		public function get currentSize():int {
+			return _currentSize;
 		}
-	}
 
-	public function addAnimation (animationName : String, animationToProcess : MovieClip, animationBound : IAnimationBound) : void {
-		_animationsQueues.push(new AnimationDescriptionImpl(animationName, animationToProcess, animationBound));
-        _totalSize ++;
-		if (!_running) {
-			start();
+		public function activate():void {
+			_activate = true;
+			checkRunningState();
 		}
-	}
 
-    public function getAnimation(animationName:String):PrerenderedMovieClip {
-        return _prerenderedAnimations[animationName];
-    }
-
-    [ArrayElementType("ice.tools.display.prerenderer.PrerenderedMovieClip")]
-    public function get allAnimations () : Dictionary {
-        return _prerenderedAnimations
-    }
-
-    private function onEnterFrameEnable(event:Event):void {
-		var _startExecutionTime:Number = getTimer();
-
-		var t:int = 0;
-		while ((getTimer() - _startExecutionTime) < 10) {
-			if (_animationsQueues.length == 0 && _currentProcessing == null) {
-				trace("PrerenderedMovieClipWorker : queue is empty");
-				stop();
-                dispatchEvent(new PrerenderedMovieClipEvent(PrerenderedMovieClipEvent.PRERENDER_END));
-				break;
+		private function start():void {
+			if (_running) {
+				return;
 			}
-			execute();
+			_running = true;
+			_eventDispatcher.addEventListener(Event.ENTER_FRAME, onEnterFrameEnable, false, int.MIN_VALUE);
 		}
+
+		private function stop() : void {
+			if (!_running) {
+				return;
+			}
+			_eventDispatcher.removeEventListener(Event.ENTER_FRAME, onEnterFrameEnable);
+			_running = false;
+
+			trace("PrerenderedMovieClipWorker halted. \n\tAnimations List:");
+			for (var keyName : String in _prerenderedAnimations) {
+				trace("\t\t* " + keyName + " -> " + PrerenderedMovieClip(_prerenderedAnimations[keyName]).totalFrames + " frames");
+			}
+		}
+
+		public function addAnimation(animationName:String, animationToProcess:MovieClip,
+									 animationBound:IAnimationBound):void {
+			_animationsQueues.push(new AnimationDescriptionImpl(animationName, animationToProcess, animationBound));
+			_totalSize++;
+			checkRunningState();
+		}
+
+		private function checkRunningState():void {
+			if (!_running && _activate) {
+				start();
+			}
+		}
+
+		public function getAnimation(animationName:String):PrerenderedMovieClip {
+			return _prerenderedAnimations[animationName];
+		}
+
+		[ArrayElementType("ice.tools.display.prerenderer.PrerenderedMovieClip")]
+		public function get allAnimations () : Dictionary {
+			return _prerenderedAnimations
+		}
+
+		private function onEnterFrameEnable(event:Event):void {
+			var _startExecutionTime:Number = getTimer();
+
+			var t:int = 0;
+			while ((getTimer() - _startExecutionTime) < 10) {
+				if (_animationsQueues.length == 0 && _currentProcessing == null) {
+					trace("PrerenderedMovieClipWorker : queue is empty");
+					stop();
+					dispatchEvent(new PrerenderedMovieClipEvent(PrerenderedMovieClipEvent.PRERENDER_END));
+					break;
+				}
+				execute();
+			}
+		}
+
+		private function execute():void {
+			if (_currentProcessing == null) {
+				var animationDescription : IAnimationDescription = _animationsQueues.shift();
+				_currentProcessing = MovieClipConversionUtils.generatePrerenderedMovieClip(animationDescription.movieClip, animationDescription.bounds, animationDescription, _maxExecutionTime);
+			} else {
+				MovieClipConversionUtils.continueProcessing(_currentProcessing, _maxExecutionTime);
+			}
+
+			if (_currentProcessing.isCompleted) {
+				_prerenderedAnimations[_currentProcessing.animationDescription.name] = _currentProcessing.finalAnimation;
+				_currentSize++;
+				_currentProcessing = null;
+			}
+
+		}
+
+		private var _currentProcessing : ICurrentProcessing;
+		private const _animationsQueues : Vector.<IAnimationDescription> = new Vector.<IAnimationDescription>();
+		[ArrayElementType("ice.tools.display.prerenderer.PrerenderedMovieClip")]
+		private const _prerenderedAnimations : Dictionary = new Dictionary();
+		private var _eventDispatcher:IEventDispatcher;
+		private var _running : Boolean = false;
+		private var _activate : Boolean = false;
+		private var _maxExecutionTime : int;
+		private var _currentSize : int;
+		private var _totalSize : int;
+
 	}
-
-	private function execute():void {
-		if (_currentProcessing == null) {
-			var animationDescription : IAnimationDescription = _animationsQueues.shift();
-			_currentProcessing = MovieClipConversionUtils.generatePrerenderedMovieClip(animationDescription.movieClip, animationDescription.bounds, animationDescription, _maxExecutionTime);
-		} else {
-			MovieClipConversionUtils.continueProcessing(_currentProcessing, _maxExecutionTime);
-		}
-
-		if (_currentProcessing.isCompleted) {
-			_prerenderedAnimations[_currentProcessing.animationDescription.name] = _currentProcessing.finalAnimation;
-            _currentSize++;
-			_currentProcessing = null;
-		}
-
-	}
-
-	private var _currentProcessing : ICurrentProcessing;
-	private const _animationsQueues : Vector.<IAnimationDescription> = new Vector.<IAnimationDescription>();
-    [ArrayElementType("ice.tools.display.prerenderer.PrerenderedMovieClip")]
-	private const _prerenderedAnimations : Dictionary = new Dictionary();
-    private var _eventDispatcher:IEventDispatcher;
-	private var _running : Boolean = false;
-	private var _maxExecutionTime : int;
-    private var _currentSize : int;
-    private var _totalSize : int;
-
-}
 }
 
 import flash.display.MovieClip;
@@ -123,7 +135,7 @@ class AnimationDescriptionImpl implements IAnimationDescription {
 		_name = name;
 		_movieClip = movieClip;
 		_bounds = bounds;
-        _loopable = loopable;
+		_loopable = loopable;
 	}
 
 	public function get name():String {
@@ -138,11 +150,11 @@ class AnimationDescriptionImpl implements IAnimationDescription {
 		return _bounds;
 	}
 
-    public function get loopable():Boolean {
-        return _loopable;
-    }
+	public function get loopable():Boolean {
+		return _loopable;
+	}
 
-    private var _loopable : Boolean = true;
+	private var _loopable : Boolean = true;
 	private var _name : String;
 	private var _movieClip : MovieClip;
 	private var _bounds : IAnimationBound;

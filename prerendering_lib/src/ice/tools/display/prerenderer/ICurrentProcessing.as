@@ -14,8 +14,8 @@ public interface ICurrentProcessing {
 		function get currentFrame () : int;
 		function set currentFrame (value : int) : void;
 		function get framesGenerated () : Vector.<BitmapData>;
-		function get finalAnimation () : PrerenderedMovieClip;
-		function set finalAnimation(value:PrerenderedMovieClip):void;
+		function get finalAnimation () : IPrerenderedMovieClip;
+		function set finalAnimation(value:IPrerenderedMovieClip):void;
 		function get animationDescription () : IAnimationDescription;
 	}
 }

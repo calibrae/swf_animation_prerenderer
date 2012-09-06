@@ -20,9 +20,9 @@ import ice.tools.display.prerenderer.MovieClipConversionUtils;
 import ice.tools.display.prerenderer.PrerenderedMovieClipEvent;
 import ice.tools.display.prerenderer.PrerenderedMovieClipWorker;
 
-public class JellyAnimationCatalogue extends EventDispatcher{
+public class JellyAnimationCooker extends EventDispatcher{
 
-    public function JellyAnimationCatalogue(worker : PrerenderedMovieClipWorker) {
+    public function JellyAnimationCooker(worker : PrerenderedMovieClipWorker) {
         _worker = worker;
     }
 

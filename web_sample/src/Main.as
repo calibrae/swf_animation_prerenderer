@@ -24,9 +24,10 @@ import flash.utils.getTimer;
 
 import ice.game.wordox.views.letters.EJellyAnimation;
 import ice.game.wordox.views.letters.JellyAnimation;
-import ice.game.wordox.views.letters.JellyAnimationCatalogue;
+import ice.game.wordox.views.letters.JellyAnimationCooker;
 import ice.game.wordox.views.progressbar.Progressbar;
-import ice.tools.display.prerenderer.PrerenderedMovieClipEvent;
+	import ice.tools.display.prerenderer.IPrerenderedMovieClip;
+	import ice.tools.display.prerenderer.PrerenderedMovieClipEvent;
 import ice.tools.display.prerenderer.PrerenderedMovieClipWorker;
 import ice.tools.display.tools.FPSDisplay;
 import ice.wordox.gfx.JellyWinAnimation;
@@ -66,6 +67,7 @@ public class Main extends Sprite {
                 + "\tDOWN: Change jellies animations (prerendered mode only)\n"
                 + "\tPAGE UP: Change jellies colors on every frame (prerendered mode only)\n"
                 + "\tPAGE DOWN: Stop changing colors on every frame (prerendered mode only)\n"
+				+ "\tSUPPR: Call garbage collector\n"
         ;
         infoTextfield.x = 300;
         infoTextfield.y = 300;
@@ -84,7 +86,7 @@ public class Main extends Sprite {
     private function initializeJellyCatalogue():void {
         _prerenderingStartTime = getTimer();
         _prerenderedMovieClipWorker = new PrerenderedMovieClipWorker(this, 20);
-        _jellyCatalogue = new JellyAnimationCatalogue(_prerenderedMovieClipWorker);
+        _jellyCatalogue = new JellyAnimationCooker(_prerenderedMovieClipWorker);
         _jellyCatalogue.addEventListener(PrerenderedMovieClipEvent.PRERENDER_END, onPrerenderEnd);
         this.addEventListener(Event.ENTER_FRAME, onEnterFrameRefreshAnimationCount);
         _jellyCatalogue.initializeAllMovieclip();
@@ -129,15 +131,15 @@ public class Main extends Sprite {
         }
         //
 
-//			if (event.keyCode == Keyboard.A && _drawingFunction != addPrerenderRows) {
-//				changeMode(addPrerenderRows);
-//				return;
-//			}
-//
-//			if(event.keyCode == Keyboard.Z && _drawingFunction != addNormalRows) {
-//				changeMode(addNormalRows);
-//				return;
-//			}
+			if (event.keyCode == Keyboard.A && _drawingFunction != addPrerenderRows) {
+				changeMode(addPrerenderRows);
+				return;
+			}
+
+			if(event.keyCode == Keyboard.Z && _drawingFunction != addNormalRows) {
+				changeMode(addNormalRows);
+				return;
+			}
 
         if (event.keyCode == Keyboard.RIGHT) {
             addRows(1);
@@ -165,6 +167,10 @@ public class Main extends Sprite {
             if (event.keyCode == Keyboard.DOWN) {
                 player = Math.random() * 4;
             }
+
+			if (event.keyCode == Keyboard.DELETE) {
+				System.gc();
+			}
 
             myJelly.updateAnimation(
                     animation
@@ -203,7 +209,7 @@ public class Main extends Sprite {
 
     private function addRows(rowsCount:int):void {
         _drawingFunction(rowsCount);
-        displaySamplers();
+//        displaySamplers();
     }
 
     private function displaySamplers():void {
@@ -325,6 +331,9 @@ public class Main extends Sprite {
             }
 
             var objectRemoved:DisplayObject = _jelliesContainer.removeChildAt(_jelliesContainer.numChildren - 1);
+			if (objectRemoved is JellyAnimation) {
+				JellyAnimation(objectRemoved).dispose();
+			}
             if (_drawingFunction == addPrerenderRows && _jelliesAnimations.indexOf(objectRemoved) != -1) {
                 _jelliesAnimations.splice(_jelliesAnimations.indexOf(objectRemoved), 1);
             }
@@ -409,7 +418,7 @@ public class Main extends Sprite {
 
 
     private var _prerenderingStartTime:Number;
-    private var _jellyCatalogue:JellyAnimationCatalogue;
+    private var _jellyCatalogue:JellyAnimationCooker;
     private var _prerenderedMovieClipWorker:PrerenderedMovieClipWorker;
     private var _waitingAnimation:DisplayObject;
     private var _progressbar:Progressbar;
